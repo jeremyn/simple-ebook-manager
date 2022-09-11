@@ -1,0 +1,23 @@
+{
+    "authors": [
+        {
+            "display": "CompleteExample Author1",
+            "sort": "Author1, CompleteExample"
+        },
+        "CompressedFieldsExampleAuthor"
+    ],
+    "book_files": {
+        "directory": ".",
+        "hash": "md5:a6aceb15816f6f7e73aa01c41c9cec09",
+        "name": "Overlap Example.txt"
+    },
+    "book_title": {
+        "display": "Overlap Example",
+        "sort": "Example, Overlap"
+    },
+    "date_published": "2000-Jan-31",
+    "ids": {
+        "ISBN": "978-overlap-example"
+    },
+    "subtitle": "OverlapExample subtitle"
+}

@@ -1,0 +1,8 @@
+metadata_directory,book_title_sort,book_title_display,subtitle,authors_sort,authors_display,book_files,ids,date_published,description
+/placeholder_library_dir/Compressed Fields Example,CompressedFieldsExampleTitle,CompressedFieldsExampleTitle,,CompressedFieldsExampleAuthor,CompressedFieldsExampleAuthor,Compressed Fields Example.txt::md5:f5ac42efafd896f3586dad942dc43a9a,,2000-01-31,"This book has single word SortDisplay fields.
+"
+/placeholder_library_dir/Complete Example,"Example, Complete",Complete Example,CompleteExample subtitle 😀,"Author1, CompleteExample;Author2, CompleteExample",CompleteExample Author1;CompleteExample Author2,Complete Example.1.txt::md5:26c550676705b779f180c3baa4b02a36;Complete Example.2.txt::md5:acfb87d35ea9685c1346c50f7920c04a,ISBN:978-complete-example;URI:https://example.com,2000-01-31,"This book has all metadata fields filled and a non-ASCII subtitle and description 😀.
+"
+/placeholder_library_dir/Minimal Example,"Example, Minimal",Minimal Example,,,,Minimal Example.txt::md5:6288fd0c77d28fe3e4ff34f13042e1bc,,,
+/placeholder_library_dir/Overlap Example,"Example, Overlap",Overlap Example,OverlapExample subtitle,"Author1, CompleteExample;CompressedFieldsExampleAuthor",CompleteExample Author1;CompressedFieldsExampleAuthor,Overlap Example.txt::md5:a6aceb15816f6f7e73aa01c41c9cec09,ISBN:978-overlap-example,2000-01-31,"This book overlaps metadata with both Complete Example and Compressed Fields Example.
+"

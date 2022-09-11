@@ -1,0 +1,23 @@
+{
+    "book_title": "title",
+    "subtitle": {
+        "type": "string",
+        "inline": true
+    },
+    "authors": "sortdisplay",
+    "book_files": "file",
+    "ids": {
+        "type": "keyvalue",
+        "key_label": "id_type",
+        "value_label": "id_value"
+    },
+    "date_published": {
+        "type": "date",
+        "input_format": "%Y-%b-%d",
+        "output_format": "%Y-%m-%d"
+    },
+    "description": {
+        "type": "string",
+        "inline": false
+    }
+}

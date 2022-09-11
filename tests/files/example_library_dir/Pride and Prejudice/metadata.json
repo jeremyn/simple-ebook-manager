@@ -1,0 +1,25 @@
+{
+    "authors": {
+        "display": "Jane Austen",
+        "sort": "Austen, Jane"
+    },
+    "book_files": [
+        {
+            "directory": ".",
+            "hash": "md5:6c1fce7eeb895b7821f5b56e7a9f2da1",
+            "name": "Pride and Prejudice.epub"
+        },
+        {
+            "directory": ".",
+            "hash": "md5:42b12a9921f1c14f0c81e3d42e5d58ff",
+            "name": "Pride and Prejudice.pdf"
+        }
+    ],
+    "book_title": "Pride and Prejudice",
+    "date_published": "1813-Jan-28",
+    "ids": {
+        "ISBN": "978-pride-and-prejudice",
+        "URI": "https://example.com"
+    },
+    "subtitle": "A Novel in Three Volumes"
+}

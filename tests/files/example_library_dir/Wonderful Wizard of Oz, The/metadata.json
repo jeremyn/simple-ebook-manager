@@ -1,0 +1,28 @@
+{
+    "authors": {
+        "display": "L. Frank Baum",
+        "sort": "Baum, L. Frank"
+    },
+    "book_files": [
+        {
+            "directory": ".",
+            "hash": "md5:20f8758fc02e39a7b7c26b5ab1073630",
+            "name": "The Wonderful Wizard of Oz.epub"
+        },
+        {
+            "directory": ".",
+            "hash": "md5:bc78673801bbc8123b81ad68c6d86423",
+            "name": "The Wonderful Wizard of Oz.txt"
+        }
+    ],
+    "book_title": {
+        "display": "The Wonderful Wizard of Oz",
+        "sort": "Wonderful Wizard of Oz, The"
+    },
+    "date_published": "1900-May-17",
+    "ids": {
+        "ISBN": "978-wizard-of-oz",
+        "URI": "https://example.com"
+    },
+    "subtitle": null
+}

@@ -1,0 +1,34 @@
+{
+    "authors": [
+        {
+            "display": "CompleteExample Author1",
+            "sort": "Author1, CompleteExample"
+        },
+        {
+            "display": "CompleteExample Author2",
+            "sort": "Author2, CompleteExample"
+        }
+    ],
+    "book_files": [
+        {
+            "directory": "{name1}/{name2}",
+            "hash": "md5:26c550676705b779f180c3baa4b02a36",
+            "name": "Complete Example.1.txt"
+        },
+        {
+            "directory": "{name1}/{name2}",
+            "hash": "md5:acfb87d35ea9685c1346c50f7920c04a",
+            "name": "Complete Example.2.txt"
+        }
+    ],
+    "book_title": {
+        "display": "Complete Example",
+        "sort": "Example, Complete"
+    },
+    "date_published": "2000-Jan-31",
+    "ids": {
+        "ISBN": "978-complete-example",
+        "URI": "https://example.com"
+    },
+    "subtitle": "CompleteExample subtitle 😀"
+}

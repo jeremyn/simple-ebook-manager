@@ -1,0 +1,9 @@
+[tool.isort]
+profile="black"
+
+[tool.mypy]
+strict=true
+
+[tool.pylint.master]
+disable="duplicate-code"
+good-names="am,cm,fn,i,k,sd,v"

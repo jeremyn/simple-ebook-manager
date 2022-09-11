@@ -1,0 +1,21 @@
+"""
+Copyright 2022, Jeremy Nation <jeremy@jeremynation.me>
+Licensed under the GNU Affero General Public License (AGPL) v3.
+
+Main entry point to the program.
+
+"""
+import sys
+
+from src.clean import get_cmd as get_clean_cmd
+from src.command import run_cmd_main
+from src.csv import get_cmd as get_csv_cmd
+from src.custom import get_cmd as get_custom_cmd
+from src.db import get_cmd as get_db_cmd
+from src.util import configure_logging
+
+if __name__ == "__main__":
+    configure_logging()
+    run_cmd_main(
+        sys.argv, (get_clean_cmd(), get_csv_cmd(), get_custom_cmd(), get_db_cmd())
+    )

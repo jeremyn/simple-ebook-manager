@@ -1,0 +1,3 @@
+# Title: Complete Example
+#
+This book has all metadata fields filled and a non-ASCII subtitle and description 😀.
