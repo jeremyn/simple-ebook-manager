@@ -170,12 +170,12 @@ class _Args:
     UPDATE_HASH: _Arg = _Arg(
         opt="--update-hash",
         kwargs={
-            "choices": ["default", "md5", "sha256"],
-            "const": "default",
+            "choices": ["autodetect", "md5", "sha256"],
+            "const": "autodetect",
             "nargs": "?",
             "help": (
                 "update file hashes. Omit entirely to disable hash checking, leave blank or choose "
-                '"default" to autodetect from library, or specify "md5" or "sha256" to use that '
+                '"autodetect" to autodetect from library, or specify "md5" or "sha256" to use that '
                 "algorithm."
             ),
         },

@@ -10,22 +10,70 @@ from copy import deepcopy
 from pathlib import Path
 from unittest.mock import patch
 
-from src.clean import get_cmd
+from src.book import BookFile
+from src.clean import _get_algo, get_cmd
 from src.command import Args, Command
 from src.util import (
     LOG_LEVEL,
+    Algorithm,
+    SimpleEbookManagerExit,
     cmp,
     get_log_records,
     get_metadata_fn,
     get_schema_fn,
     get_string_fn,
     read_json,
+    read_metadata,
     read_text,
     write_json,
     write_text,
 )
-from tests.base import EXAMPLE_LIBRARY_DIR, VALID_LIBRARY_DIR, ValidBookDirs
+from tests.base import (
+    EXAMPLE_LIBRARY_DIR,
+    VALID_LIBRARY_DIR,
+    SimpleEbookManagerTestCase,
+    ValidBookDirs,
+)
 from tests.test_command import CommandTestCase
+
+
+class TestGetAlgo(SimpleEbookManagerTestCase):
+    """Test _get_algo."""
+
+    def setUp(self) -> None:
+        b_dir = ValidBookDirs.MINIMAL
+        metadata = read_metadata(b_dir)
+        self.bookfile = BookFile.from_args(
+            book_title_sort=metadata["book_title"],
+            basename=metadata["book_files"]["name"],
+            metadata_dir=b_dir,
+            dir_vars=(),
+            input_dir_str=metadata["book_files"]["directory"],
+            hash_=metadata["book_files"]["hash"],
+        )
+        super().setUp()
+
+    def test_autodetect(self) -> None:
+        """Test algo_str 'autodetect'."""
+        self.assertEqual(Algorithm.MD5, _get_algo("autodetect", self.bookfile))
+
+    def test_error_autodetect(self) -> None:
+        """Error if autodetect fails."""
+        self.bookfile.hash = "bad"
+        with self.assertRaises(SimpleEbookManagerExit) as cm:
+            _get_algo("autodetect", self.bookfile)
+        self.assertEqual(
+            (
+                f"ERROR: '{Args.UPDATE_HASH.opt}' provided without algorithm and autodetect failed "
+                f"on the hash for '{self.bookfile.basename}' in "
+                f"'{get_metadata_fn(self.bookfile.metadata_dir)}'."
+            ),
+            str(cm.exception),
+        )
+
+    def test_input_algo(self) -> None:
+        """Test algo_str with valid algo."""
+        self.assertEqual(Algorithm.SHA256, _get_algo("sha256", self.bookfile))
 
 
 class TestCommand(CommandTestCase):

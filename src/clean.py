@@ -13,14 +13,15 @@ from tempfile import TemporaryDirectory
 from typing import Optional, Sequence
 
 from src.all_metadata import AllMetadata, KeyType
-from src.book import Book
+from src.book import Book, BookFile
 from src.command import Args, CmdNames, Command
 from src.util import (
     Algorithm,
     Newline,
     Schema,
+    SimpleEbookManagerException,
+    SimpleEbookManagerExit,
     cmp,
-    get_algo,
     get_file_hashes,
     get_metadata_fn,
     get_newline,
@@ -30,6 +31,34 @@ from src.util import (
 logger = logging.getLogger(__name__)
 
 _BATCH_SIZE = 100
+
+
+def _get_algo(algo_str: Optional[str], bookfile: BookFile) -> Optional[Algorithm]:
+    """Get Algorithm.
+
+    Return None if algo_str is None, else Algorithm from algo_str if it's not "autodetect", else
+    detect Algorithm from bookfile.
+
+    """
+    if algo_str is None:
+        return None
+
+    try:
+        return Algorithm[algo_str.upper()]
+    except KeyError:
+        pass
+
+    if algo_str == "autodetect":
+        try:
+            return Algorithm[bookfile.hash.split(":")[0].upper()]
+        except KeyError:
+            raise SimpleEbookManagerExit(
+                f"ERROR: '{Args.UPDATE_HASH.opt}' provided without algorithm and autodetect failed "
+                f"on the hash for '{bookfile.basename}' in "
+                f"'{get_metadata_fn(bookfile.metadata_dir)}'."
+            ) from None
+
+    raise SimpleEbookManagerException(f"invalid algo_str: '{algo_str}'")
 
 
 def _update_files_if_changed(book: Book, output_fns: Sequence[Path]) -> bool:
@@ -109,7 +138,7 @@ def _main(args: Namespace, _: Optional[list[str]] = None) -> None:
         am,
         schema,
         get_newline(args.newline, get_metadata_fn(am.books[0].metadata_dir)),
-        get_algo(args.update_hash, am.files[0].hash),
+        _get_algo(args.update_hash, am.files[0]),
         args.replace_unicode,
     )
 

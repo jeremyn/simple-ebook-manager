@@ -18,7 +18,6 @@ from src.util import (
     SimpleEbookManagerException,
     SimpleEbookManagerExit,
     cmp,
-    get_algo,
     get_csv_fn,
     get_db_fn,
     get_file_hashes,
@@ -36,7 +35,6 @@ from src.util import (
     write_schema,
     write_text,
 )
-from src.util.misc import _get_file_hash
 from src.util.schema import _SchemaItemBase
 from tests.base import (
     UTF_8,
@@ -45,27 +43,6 @@ from tests.base import (
     SimpleEbookManagerTestCase,
     ValidBookDirs,
 )
-
-
-class TestGetAlgo(SimpleEbookManagerTestCase):
-    """Test get_algo."""
-
-    def setUp(self) -> None:
-        self.hash = _get_file_hash(VALID_SCHEMA_FN, Algorithm.SHA256)
-        super().setUp()
-
-    def test_none(self) -> None:
-        """Test algo_str None."""
-        self.assertIsNone(get_algo(None, self.hash))
-
-    def test_default(self) -> None:
-        """Test algo_str default."""
-        self.assertEqual(Algorithm.SHA256, get_algo("default", self.hash))
-
-    def test_algo(self) -> None:
-        """Test algo_str with algo."""
-        self.hash = _get_file_hash(VALID_SCHEMA_FN, Algorithm.SHA256)
-        self.assertEqual(Algorithm.MD5, get_algo("md5", self.hash))
 
 
 class TestGetFilename(SimpleEbookManagerTestCase):

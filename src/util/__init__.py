@@ -30,7 +30,6 @@ from .misc import (
     SimpleEbookManagerException,
     SimpleEbookManagerExit,
     configure_logging,
-    get_algo,
     get_file_hashes,
     get_log_records,
 )
@@ -61,7 +60,6 @@ __all__ = [
     "SimpleEbookManagerException",
     "SimpleEbookManagerExit",
     "configure_logging",
-    "get_algo",
     "get_file_hashes",
     "get_log_records",
     # schema

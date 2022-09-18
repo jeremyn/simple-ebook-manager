@@ -12,7 +12,7 @@ import logging
 from dataclasses import dataclass
 from multiprocessing.pool import Pool
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional, Sequence
+from typing import TYPE_CHECKING, Sequence
 
 if TYPE_CHECKING:
     from hashlib import _Hash
@@ -53,20 +53,8 @@ class SimpleEbookManagerExit(SystemExit):
 class Algorithm(enum.Enum):
     """Represents the user-requested hashing algorithm."""
 
-    DEFAULT = enum.auto()
     MD5 = enum.auto()
     SHA256 = enum.auto()
-
-
-def get_algo(algo_str: Optional[str], f_hash: str) -> Optional[Algorithm]:
-    """Get Algorithm or None."""
-    if algo_str is None:
-        return None
-
-    if (algo := Algorithm[algo_str.upper()]) != Algorithm.DEFAULT:
-        return algo
-
-    return Algorithm[f_hash.split(":")[0].upper()]
 
 
 def _get_file_hash(input_fn: Path, algo: Algorithm) -> str:
