@@ -8,6 +8,8 @@ Test src.all_metadata.
 import shutil
 import uuid
 from itertools import chain
+from pathlib import Path
+from typing import Optional
 
 from src.all_metadata import AllMetadata, AMFields, KeyType, get_all_book_dirs
 from src.book import Book, SortDisplay
@@ -17,7 +19,6 @@ from src.util import (
     SimpleEbookManagerExit,
     get_log_records,
     get_metadata_fn,
-    read_json,
     read_schema,
     write_json,
 )
@@ -189,80 +190,77 @@ class TestAllMetadata(SimpleEbookManagerTestCase):
 
         self.assertEqual(self.valid_am, am)
 
-    def test_error_duplicate_title(self) -> None:
-        """Error if a title is duplicated between books."""
+    def _test_error_duplicate_title(
+        self, orig_b_dir: Path, diff: Optional[str] = None
+    ) -> None:
+        """General method to error with duplicate title."""
         l_dir = self.get_t_dir()
         b_dirs = [l_dir / "a", l_dir / "b"]
         for b_dir in b_dirs:
-            shutil.copytree(ValidBookDirs.MINIMAL, b_dir)
-
+            shutil.copytree(orig_b_dir, b_dir)
         metadata_fn = get_metadata_fn(b_dirs[1])
-        metadata = read_json(metadata_fn)
-        fieldname = self.schema.title_fieldname
+        metadata = read_metadata(metadata_fn)
 
-        # same sort and display
-        with self.assertRaises(SimpleEbookManagerExit) as cm:
-            AllMetadata.from_args(
-                [l_dir], self.dir_vars, self.schema, key_type=KeyType.NONE
-            )
-        self.assertEqual(
-            (
-                f"ERROR: the title with sort '{metadata[fieldname]['sort']}' and display "
-                f"'{metadata[fieldname]['display']}' appears in more than one book."
-            ),
-            str(cm.exception),
-        )
+        field = metadata[self.schema.title_fieldname]
+        if diff is not None:
+            same = "display" if diff == "sort" else "sort"
+            field[diff] += "x"
+            write_json(metadata_fn, metadata)
 
-        # different sort, same display
-        orig_sort = metadata[fieldname]["sort"]
-
-        metadata[fieldname]["sort"] += "x"
-        write_json(metadata_fn, metadata)
-
-        with self.assertRaises(SimpleEbookManagerExit) as cm:
-            AllMetadata.from_args(
-                [l_dir], self.dir_vars, self.schema, key_type=KeyType.NONE
-            )
-        self.assertEqual(
-            (
-                f"ERROR: the title display value '{metadata[fieldname]['display']}' has more than "
-                "one sort value over all books."
-            ),
-            str(cm.exception),
-        )
-
-        # same sort, different display
-        metadata[fieldname]["sort"] = orig_sort
-        metadata[fieldname]["display"] += "x"
-        write_json(metadata_fn, metadata)
+        match field:
+            case str():
+                error_msg = f"ERROR: the title '{field}' appears in more than one book."
+            case {"display": display, "sort": sort}:
+                if diff is None:
+                    error_msg = (
+                        f"ERROR: the title with display '{display}' and sort '{sort}' appears in "
+                        "more than one book."
+                    )
+                else:
+                    error_msg = (
+                        f"ERROR: the title {same} value '{field[same]}' has more than one {diff} "
+                        "value over all books."
+                    )
 
         with self.assertRaises(SimpleEbookManagerExit) as cm:
             AllMetadata.from_args(
                 [l_dir], self.dir_vars, self.schema, key_type=KeyType.NONE
             )
-        self.assertEqual(
-            (
-                f"ERROR: the title sort value '{metadata[fieldname]['sort']}' has more than one "
-                "display value over all books."
-            ),
-            str(cm.exception),
-        )
+        self.assertEqual(error_msg, str(cm.exception))
 
-    def test_error_partial_duplicate_sortdisplay(self) -> None:
+    def test_error_complete_duplicate_title_same_sort_display(self) -> None:
+        """Error with complete duplicate title with same sort and display."""
+        self._test_error_duplicate_title(ValidBookDirs.COMPRESSED_FIELDS)
+
+    def test_error_complete_duplicate_title_different_sort_display(self) -> None:
+        """Error with complete duplicate title with different sort and display."""
+        self._test_error_duplicate_title(ValidBookDirs.MINIMAL)
+
+    def test_error_partial_duplicate_title_different_display(self) -> None:
+        """Error with partial duplicate title with different displays."""
+        self._test_error_duplicate_title(ValidBookDirs.MINIMAL, "display")
+
+    def test_error_partial_duplicate_title_different_sort(self) -> None:
+        """Error with partial duplicate title with different sorts."""
+        self._test_error_duplicate_title(ValidBookDirs.MINIMAL, "sort")
+
+    def _test_error_partial_duplicate_sortdisplay(self, diff: str) -> None:
         """Error if there are partial duplicate sortdisplays between books."""
         fieldname = "authors"
         l_dir = self.get_t_dir()
-        for i, b_dir in enumerate([l_dir / "valid", l_dir / "changed"]):
+        for i, b_dir in enumerate([l_dir / "a", l_dir / "b"]):
             shutil.copytree(ValidBookDirs.COMPLETE, b_dir)
             metadata_fn = get_metadata_fn(b_dir)
             metadata = read_metadata(metadata_fn)
-            metadata["authors"] = metadata["authors"][0]
             if i == 1:
                 # avoid duplicate title error
                 metadata["book_title"] = "asdf"
 
-                orig_sort = metadata[fieldname]["sort"]
-                metadata[fieldname]["sort"] += "x"
+                field = metadata[fieldname]
+                if diff is not None:
+                    same = "display" if diff == "sort" else "sort"
+                    field[0][diff] += "x"
+                    write_json(metadata_fn, metadata)
             write_json(metadata_fn, metadata)
 
         with self.assertRaises(SimpleEbookManagerExit) as cm:
@@ -271,25 +269,16 @@ class TestAllMetadata(SimpleEbookManagerTestCase):
             )
         self.assertEqual(
             (
-                f"ERROR: for field '{fieldname}' the display value "
-                f"'{metadata[fieldname]['display']}' has more than one sort value over all books."
+                f"ERROR: for field '{fieldname}' the {same} value "
+                f"'{field[0][same]}' has more than one {diff} value over all books."
             ),
             str(cm.exception),
         )
 
-        # same sort, different display
-        metadata[fieldname]["sort"] = orig_sort
-        metadata[fieldname]["display"] += "x"
-        write_json(metadata_fn, metadata)
+    def test_error_partial_duplicate_sortdisplay_different_display(self) -> None:
+        """Error with partial duplicate sortdisplay with different displays."""
+        self._test_error_partial_duplicate_sortdisplay("display")
 
-        with self.assertRaises(SimpleEbookManagerExit) as cm:
-            AllMetadata.from_args(
-                [l_dir], self.dir_vars, self.schema, key_type=KeyType.NONE
-            )
-        self.assertEqual(
-            (
-                f"ERROR: for field '{fieldname}' the sort value '{metadata[fieldname]['sort']}' "
-                "has more than one display value over all books."
-            ),
-            str(cm.exception),
-        )
+    def test_error_partial_duplicate_sortdisplay_different_sort(self) -> None:
+        """Error with partial duplicate sortdisplay with different sorts."""
+        self._test_error_partial_duplicate_sortdisplay("sort")

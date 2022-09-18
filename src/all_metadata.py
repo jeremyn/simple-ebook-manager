@@ -68,10 +68,14 @@ def _get_books(
     for b_dir in b_dirs:
         book = Book.from_args(b_dir, dir_vars, schema)
         if book.title in titles:
-            raise SimpleEbookManagerExit(
-                f"ERROR: the title with sort '{book.title.sort}' and display "
-                f"'{book.title.display}' appears in more than one book."
-            )
+            if book.title.sort == book.title.display:
+                error_msg = f"ERROR: the title '{book.title.sort}' appears in more than one book."
+            else:
+                error_msg = (
+                    f"ERROR: the title with display '{book.title.display}' and sort "
+                    f"'{book.title.sort}' appears in more than one book."
+                )
+            raise SimpleEbookManagerExit(error_msg)
         titles.append(book.title)
 
         if book.title.display in displays:
