@@ -1,2 +1,3 @@
-CREATE VIEW v_test_authors AS SELECT * FROM authors;
-CREATE VIEW v_test_book AS SELECT * FROM book;
+CREATE TABLE user_sql_table (pkey INTEGER PRIMARY KEY);
+INSERT INTO user_sql_table VALUES (1);
+CREATE VIEW v_user_sql_view AS SELECT * FROM book;

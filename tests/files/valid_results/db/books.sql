@@ -57,6 +57,8 @@ CREATE TABLE book_ids (
 INSERT INTO "book_ids" VALUES(2,'ISBN','978-complete-example');
 INSERT INTO "book_ids" VALUES(2,'URI','https://example.com');
 INSERT INTO "book_ids" VALUES(4,'ISBN','978-overlap-example');
+CREATE TABLE user_sql_table (pkey INTEGER PRIMARY KEY);
+INSERT INTO "user_sql_table" VALUES(1);
 CREATE VIEW v_book_authors AS
 SELECT
     book.pkey || ':' || authors.pkey AS unique_key,
@@ -213,6 +215,5 @@ GROUP BY
     book.book_title_sort
 ORDER BY
     book.book_title_sort;
-CREATE VIEW v_test_authors AS SELECT * FROM authors;
-CREATE VIEW v_test_book AS SELECT * FROM book;
+CREATE VIEW v_user_sql_view AS SELECT * FROM book;
 COMMIT;
