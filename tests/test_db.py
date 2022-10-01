@@ -4,11 +4,15 @@ Licensed under the GNU Affero General Public License (AGPL) v3.
 
 Test src.db.
 
+Optionally set the DB_DUMP_DIR environment variable to $DIR for TestDb.test_int to dump a modified
+test_conn to $DIR/books.sql.
+
 """
+import os
 import shutil
 from pathlib import Path
 from sqlite3 import Connection, Row, connect
-from typing import Any
+from typing import Any, Optional
 from unittest.mock import patch
 
 from src.command import Args, Command
@@ -126,7 +130,9 @@ class TestDb(CommandTestCase):
             )
 
     @patch("src.db.db._BATCH_SIZE", 3)
-    def _test_main(self, *, use_uuid_key: bool) -> None:
+    def _test_main(
+        self, *, use_uuid_key: bool, db_dump_dir_str: Optional[str] = None
+    ) -> None:
         """General method for testing db command."""
         db_fn = get_db_fn(self.l_dirs[0])
         db_fn.touch()
@@ -167,8 +173,12 @@ class TestDb(CommandTestCase):
 
         test_conn = connect(db_fn)
         test_conn.row_factory = Row
-        # uncomment to dump test_conn
-        # _dump_db(test_conn, Path.home() / VALID_DB_SQL_FN.name, str(self.l_dirs[0]))
+        if db_dump_dir_str is not None:
+            _dump_db(
+                test_conn,
+                Path(db_dump_dir_str) / VALID_DB_SQL_FN.name,
+                str(self.l_dirs[0]),
+            )
         test_data = self._get_sql_data(test_conn)
 
         valid_conn = connect(":memory:")
@@ -188,7 +198,7 @@ class TestDb(CommandTestCase):
 
     def test_int(self) -> None:
         """Test db command with integer keys."""
-        self._test_main(use_uuid_key=False)
+        self._test_main(use_uuid_key=False, db_dump_dir_str=os.getenv("DB_DUMP_DIR"))
 
     def test_uuid(self) -> None:
         """Test db command with UUID keys."""
