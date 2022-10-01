@@ -74,7 +74,7 @@ class LibraryDirsAction(Action):
 
             if new_l_dir in l_dirs:
                 raise SimpleEbookManagerExit(
-                    f"ERROR: duplicate library dir found: '{str(new_l_dir)}'."
+                    f"ERROR: duplicate library dir found: '{new_l_dir}'."
                 )
 
             l_dirs.append(new_l_dir)
