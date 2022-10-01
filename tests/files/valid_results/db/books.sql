@@ -57,11 +57,85 @@ CREATE TABLE book_ids (
 INSERT INTO "book_ids" VALUES(2,'ISBN','978-complete-example');
 INSERT INTO "book_ids" VALUES(2,'URI','https://example.com');
 INSERT INTO "book_ids" VALUES(4,'ISBN','978-overlap-example');
+CREATE TABLE mat_v_book_authors(
+  unique_key TEXT,
+  book_title_sort TEXT,
+  book_title_display TEXT,
+  authors_sort TEXT,
+  authors_display TEXT
+);
+INSERT INTO "mat_v_book_authors" VALUES('1:3','CompressedFieldsExampleTitle','CompressedFieldsExampleTitle','CompressedFieldsExampleAuthor','CompressedFieldsExampleAuthor');
+INSERT INTO "mat_v_book_authors" VALUES('2:1','Example, Complete','Complete Example','Author1, CompleteExample','CompleteExample Author1');
+INSERT INTO "mat_v_book_authors" VALUES('2:2','Example, Complete','Complete Example','Author2, CompleteExample','CompleteExample Author2');
+INSERT INTO "mat_v_book_authors" VALUES('4:1','Example, Overlap','Overlap Example','Author1, CompleteExample','CompleteExample Author1');
+INSERT INTO "mat_v_book_authors" VALUES('4:3','Example, Overlap','Overlap Example','CompressedFieldsExampleAuthor','CompressedFieldsExampleAuthor');
+CREATE TABLE mat_v_book_book_files(
+  unique_key TEXT,
+  book_title_sort TEXT,
+  book_title_display TEXT,
+  file_name TEXT,
+  file_hash TEXT,
+  file_full_path TEXT,
+  metadata_directory TEXT,
+  file_directory TEXT,
+  dir_vars TEXT
+);
+INSERT INTO "mat_v_book_book_files" VALUES('1:Compressed Fields Example.txt','CompressedFieldsExampleTitle','CompressedFieldsExampleTitle','Compressed Fields Example.txt','md5:f5ac42efafd896f3586dad942dc43a9a','/placeholder_library_dir/Compressed Fields Example/Compressed Fields Example.txt','/placeholder_library_dir/Compressed Fields Example','.','name1=.;name2=.');
+INSERT INTO "mat_v_book_book_files" VALUES('2:Complete Example.1.txt','Example, Complete','Complete Example','Complete Example.1.txt','md5:26c550676705b779f180c3baa4b02a36','/placeholder_library_dir/Complete Example/Complete Example.1.txt','/placeholder_library_dir/Complete Example','{name1}/{name2}','name1=.;name2=.');
+INSERT INTO "mat_v_book_book_files" VALUES('2:Complete Example.2.txt','Example, Complete','Complete Example','Complete Example.2.txt','md5:acfb87d35ea9685c1346c50f7920c04a','/placeholder_library_dir/Complete Example/Complete Example.2.txt','/placeholder_library_dir/Complete Example','{name1}/{name2}','name1=.;name2=.');
+INSERT INTO "mat_v_book_book_files" VALUES('3:Minimal Example.txt','Example, Minimal','Minimal Example','Minimal Example.txt','md5:6288fd0c77d28fe3e4ff34f13042e1bc','/placeholder_library_dir/Minimal Example/Minimal Example.txt','/placeholder_library_dir/Minimal Example','.','name1=.;name2=.');
+INSERT INTO "mat_v_book_book_files" VALUES('4:Overlap Example.txt','Example, Overlap','Overlap Example','Overlap Example.txt','md5:a6aceb15816f6f7e73aa01c41c9cec09','/placeholder_library_dir/Overlap Example/Overlap Example.txt','/placeholder_library_dir/Overlap Example','.','name1=.;name2=.');
+CREATE TABLE mat_v_book_ids(
+  unique_key TEXT,
+  book_title_sort TEXT,
+  book_title_display TEXT,
+  id_type TEXT,
+  id_value TEXT
+);
+INSERT INTO "mat_v_book_ids" VALUES('2:ISBN','Example, Complete','Complete Example','ISBN','978-complete-example');
+INSERT INTO "mat_v_book_ids" VALUES('2:URI','Example, Complete','Complete Example','URI','https://example.com');
+INSERT INTO "mat_v_book_ids" VALUES('4:ISBN','Example, Overlap','Overlap Example','ISBN','978-overlap-example');
+CREATE TABLE mat_v_summary(
+  book_pkey INT,
+  metadata_directory TEXT,
+  book_title_sort TEXT,
+  book_title_display TEXT,
+  subtitle TEXT,
+  authors_sort TEXT,
+  authors_display TEXT,
+  book_files TEXT,
+  ids TEXT,
+  date_published TEXT,
+  description TEXT
+);
+INSERT INTO "mat_v_summary" VALUES(1,'/placeholder_library_dir/Compressed Fields Example','CompressedFieldsExampleTitle','CompressedFieldsExampleTitle',NULL,'CompressedFieldsExampleAuthor','CompressedFieldsExampleAuthor','Compressed Fields Example.txt::md5:f5ac42efafd896f3586dad942dc43a9a',NULL,'2000-01-31','This book has single word SortDisplay fields.
+');
+INSERT INTO "mat_v_summary" VALUES(2,'/placeholder_library_dir/Complete Example','Example, Complete','Complete Example','CompleteExample subtitle 😀','Author1, CompleteExample;Author2, CompleteExample','CompleteExample Author1;CompleteExample Author2','Complete Example.1.txt::md5:26c550676705b779f180c3baa4b02a36;Complete Example.2.txt::md5:acfb87d35ea9685c1346c50f7920c04a','ISBN:978-complete-example;URI:https://example.com','2000-01-31','This book has all metadata fields filled and a non-ASCII subtitle and description 😀.
+');
+INSERT INTO "mat_v_summary" VALUES(3,'/placeholder_library_dir/Minimal Example','Example, Minimal','Minimal Example',NULL,NULL,NULL,'Minimal Example.txt::md5:6288fd0c77d28fe3e4ff34f13042e1bc',NULL,NULL,NULL);
+INSERT INTO "mat_v_summary" VALUES(4,'/placeholder_library_dir/Overlap Example','Example, Overlap','Overlap Example','OverlapExample subtitle','Author1, CompleteExample;CompressedFieldsExampleAuthor','CompleteExample Author1;CompressedFieldsExampleAuthor','Overlap Example.txt::md5:a6aceb15816f6f7e73aa01c41c9cec09','ISBN:978-overlap-example','2000-01-31','This book overlaps metadata with both Complete Example and Compressed Fields Example.
+');
+CREATE TABLE mat_v_user_sql_view(
+  pkey INT,
+  metadata_directory TEXT,
+  book_title_sort TEXT,
+  book_title_display TEXT,
+  subtitle TEXT,
+  date_published TEXT,
+  description TEXT
+);
+INSERT INTO "mat_v_user_sql_view" VALUES(1,'/placeholder_library_dir/Compressed Fields Example','CompressedFieldsExampleTitle','CompressedFieldsExampleTitle',NULL,'2000-01-31','This book has single word SortDisplay fields.
+');
+INSERT INTO "mat_v_user_sql_view" VALUES(2,'/placeholder_library_dir/Complete Example','Example, Complete','Complete Example','CompleteExample subtitle 😀','2000-01-31','This book has all metadata fields filled and a non-ASCII subtitle and description 😀.
+');
+INSERT INTO "mat_v_user_sql_view" VALUES(3,'/placeholder_library_dir/Minimal Example','Example, Minimal','Minimal Example',NULL,NULL,NULL);
+INSERT INTO "mat_v_user_sql_view" VALUES(4,'/placeholder_library_dir/Overlap Example','Example, Overlap','Overlap Example','OverlapExample subtitle','2000-01-31','This book overlaps metadata with both Complete Example and Compressed Fields Example.
+');
 CREATE TABLE user_sql_table (pkey INT PRIMARY KEY);
 INSERT INTO "user_sql_table" VALUES(1);
 CREATE VIEW v_book_authors AS
 SELECT
-    book.pkey || ':' || authors.pkey AS unique_key,
+    cast(book.pkey || ':' || authors.pkey AS TEXT) AS unique_key,
     book.book_title_sort AS book_title_sort,
     book.book_title_display AS book_title_display,
     authors.sort AS authors_sort,
@@ -78,7 +152,7 @@ ORDER BY
     authors.sort;
 CREATE VIEW v_book_book_files AS
 SELECT
-    book.pkey || ':' || book_book_files.file_name AS unique_key,
+    cast(book.pkey || ':' || book_book_files.file_name AS TEXT) AS unique_key,
     book.book_title_sort AS book_title_sort,
     book.book_title_display AS book_title_display,
     book_book_files.file_name,
@@ -97,7 +171,7 @@ ORDER BY
     book_book_files.file_name;
 CREATE VIEW v_book_ids AS
 SELECT
-    book.pkey || ':' || book_ids.id_type AS unique_key,
+    cast(book.pkey || ':' || book_ids.id_type AS TEXT) AS unique_key,
     book.book_title_sort AS book_title_sort,
     book.book_title_display AS book_title_display,
     book_ids.id_type,
@@ -191,10 +265,10 @@ SELECT
     book.book_title_sort,
     book.book_title_display,
     book.subtitle,
-    authors_concat.authors_sort,
-    authors_concat.authors_display,
-    book_files_concat.book_files,
-    ids_concat.ids,
+    cast(authors_concat.authors_sort AS TEXT) AS authors_sort,
+    cast(authors_concat.authors_display AS TEXT) AS authors_display,
+    cast(book_files_concat.book_files AS TEXT) AS book_files,
+    cast(ids_concat.ids AS TEXT) AS ids,
     book.date_published,
     book.description
 FROM

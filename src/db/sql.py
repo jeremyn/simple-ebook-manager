@@ -106,7 +106,7 @@ def get_create_view_book_file_sql(fieldname: str, title_fieldname: str) -> str:
         f"""
         CREATE VIEW v_book_{fieldname} AS
         SELECT
-            book.pkey || ':' || book_{fieldname}.file_name AS unique_key,
+            cast(book.pkey || ':' || book_{fieldname}.file_name AS TEXT) AS unique_key,
             book.{title_fieldname}_sort AS {title_fieldname}_sort,
             book.{title_fieldname}_display AS {title_fieldname}_display,
             book_{fieldname}.file_name,
@@ -164,7 +164,7 @@ def get_create_view_keyvalue_sql(
         f"""
         CREATE VIEW v_book_{fieldname} AS
         SELECT
-            book.pkey || ':' || book_{fieldname}.{key_label} AS unique_key,
+            cast(book.pkey || ':' || book_{fieldname}.{key_label} AS TEXT) AS unique_key,
             book.{title_fieldname}_sort AS {title_fieldname}_sort,
             book.{title_fieldname}_display AS {title_fieldname}_display,
             book_{fieldname}.{key_label},
@@ -213,7 +213,7 @@ def get_create_view_sortdisplay_sql(fieldname: str, title_fieldname: str) -> str
         f"""
         CREATE VIEW v_book_{fieldname} AS
         SELECT
-            book.pkey || ':' || {fieldname}.pkey AS unique_key,
+            cast(book.pkey || ':' || {fieldname}.pkey AS TEXT) AS unique_key,
             book.{title_fieldname}_sort AS {title_fieldname}_sort,
             book.{title_fieldname}_display AS {title_fieldname}_display,
             {fieldname}.sort AS {fieldname}_sort,
@@ -374,13 +374,17 @@ def get_create_view_summary_sql(schema: Schema) -> str:
         match item:
             case SchemaItemTypes.Date() | SchemaItemTypes.String():
                 lines.append(f"    book.{item.name},")
-            case SchemaItemTypes.File():
-                lines.append(f"    {item.name}_concat.{item.name},")
-            case SchemaItemTypes.KeyValue():
-                lines.append(f"    {item.name}_concat.{item.name},")
+            case SchemaItemTypes.File() | SchemaItemTypes.KeyValue():
+                lines.append(
+                    f"    cast({item.name}_concat.{item.name} AS TEXT) AS {item.name},"
+                )
             case SchemaItemTypes.SortDisplay():
-                lines.append(f"    {item.name}_concat.{item.name}_sort,")
-                lines.append(f"    {item.name}_concat.{item.name}_display,")
+                lines.append(
+                    f"    cast({item.name}_concat.{item.name}_sort AS TEXT) AS {item.name}_sort,"
+                )
+                lines.append(
+                    f"    cast({item.name}_concat.{item.name}_display AS TEXT) AS {item.name}_display,"
+                )
             case SchemaItemTypes.Title():
                 title_fieldname = item.name
                 lines.append(f"    book.{title_fieldname}_sort,")

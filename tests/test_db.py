@@ -40,6 +40,14 @@ def _dump_db(conn: Connection, dump_fn: Path, temp_dir_str: str) -> None:
     Use this to update the valid dump reference.
 
     """
+    rows = conn.execute(
+        "SELECT name FROM sqlite_schema WHERE type='view' ORDER BY name"
+    ).fetchall()
+    new_tables = []
+    for row in rows:
+        new_tables.append(f"mat_{row['name']}")
+        conn.execute(f"CREATE TABLE {new_tables[-1]} AS SELECT * FROM {row['name']}")
+
     # pylint: disable=import-outside-toplevel
     from pathlib import PurePosixPath
 
@@ -53,6 +61,9 @@ def _dump_db(conn: Connection, dump_fn: Path, temp_dir_str: str) -> None:
         dump_fn,
         "\n".join([joiner.join(line.split(splitter)) for line in conn.iterdump()]),
     )
+
+    for table in new_tables:
+        conn.execute(f"DROP TABLE {table}")
 
 
 def _get_relative_to(old_path_str: str, new_path_str: str) -> str:
@@ -70,19 +81,28 @@ class TestDb(CommandTestCase):
         cls.CMD = get_cmd()
         super().setUpClass()
 
+    def _assert_view_data_correct(self, conn: Connection) -> None:
+        """Assert that views in conn match materialized views, then drop materialized views."""
+        rows = conn.execute(
+            "SELECT name FROM sqlite_schema WHERE type='view' ORDER BY name"
+        ).fetchall()
+        for row in rows:
+            mat_table = f"mat_{row['name']}"
+            self.assertSequenceEqual(
+                conn.execute(f"SELECT * FROM {mat_table}").fetchall(),
+                conn.execute(f"SELECT * FROM {row['name']}").fetchall(),
+            )
+            conn.execute(f"DROP TABLE {mat_table}")
+
     def _get_sql_data(self, conn: Connection) -> dict[str, Any]:
         """Get sql data from conn."""
         rows = conn.execute(
-            """
-            SELECT name, sql FROM sqlite_master
-            WHERE name NOT LIKE 'sqlite_autoindex%'
-            ORDER BY name
-            """
-        )
+            "SELECT name, sql FROM sqlite_schema WHERE type IN ('table', 'view') ORDER BY name"
+        ).fetchall()
         sql_data = {
             row["name"]: {
                 "sql": row["sql"],
-                "data": conn.execute(f"SELECT * from {row['name']}").fetchall(),
+                "data": conn.execute(f"SELECT * FROM {row['name']}").fetchall(),
             }
             for row in rows
         }
@@ -184,6 +204,7 @@ class TestDb(CommandTestCase):
         valid_conn = connect(":memory:")
         valid_conn.row_factory = Row
         valid_conn.executescript(read_text(VALID_DB_SQL_FN))
+        self._assert_view_data_correct(valid_conn)
         with valid_conn:
             self._standardize_conn(valid_conn, str(self.l_dirs[0]))
         valid_data = self._get_sql_data(valid_conn)
