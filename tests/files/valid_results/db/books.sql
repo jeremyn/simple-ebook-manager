@@ -1,6 +1,6 @@
 BEGIN TRANSACTION;
 CREATE TABLE authors (
-    pkey INTEGER PRIMARY KEY,
+    pkey INT PRIMARY KEY,
     sort TEXT UNIQUE NOT NULL,
     display TEXT UNIQUE NOT NULL
 );
@@ -8,7 +8,7 @@ INSERT INTO "authors" VALUES(1,'Author1, CompleteExample','CompleteExample Autho
 INSERT INTO "authors" VALUES(2,'Author2, CompleteExample','CompleteExample Author2');
 INSERT INTO "authors" VALUES(3,'CompressedFieldsExampleAuthor','CompressedFieldsExampleAuthor');
 CREATE TABLE book (
-    pkey INTEGER PRIMARY KEY,
+    pkey INT PRIMARY KEY,
     metadata_directory TEXT UNIQUE NOT NULL,
     book_title_sort TEXT UNIQUE NOT NULL,
     book_title_display TEXT UNIQUE NOT NULL,
@@ -24,8 +24,8 @@ INSERT INTO "book" VALUES(3,'/placeholder_library_dir/Minimal Example','Example,
 INSERT INTO "book" VALUES(4,'/placeholder_library_dir/Overlap Example','Example, Overlap','Overlap Example','OverlapExample subtitle','2000-01-31','This book overlaps metadata with both Complete Example and Compressed Fields Example.
 ');
 CREATE TABLE book_authors (
-    book_pkey INTEGER REFERENCES book(pkey),
-    authors_pkey INTEGER REFERENCES authors(pkey),
+    book_pkey INT REFERENCES book(pkey),
+    authors_pkey INT REFERENCES authors(pkey),
     PRIMARY KEY (book_pkey, authors_pkey)
 ) WITHOUT ROWID;
 INSERT INTO "book_authors" VALUES(1,3);
@@ -34,7 +34,7 @@ INSERT INTO "book_authors" VALUES(2,2);
 INSERT INTO "book_authors" VALUES(4,1);
 INSERT INTO "book_authors" VALUES(4,3);
 CREATE TABLE book_book_files (
-    book_pkey INTEGER REFERENCES book(pkey),
+    book_pkey INT REFERENCES book(pkey),
     file_name TEXT UNIQUE NOT NULL,
     file_hash TEXT UNIQUE NOT NULL,
     file_full_path TEXT UNIQUE NOT NULL,
@@ -49,7 +49,7 @@ INSERT INTO "book_book_files" VALUES(2,'Complete Example.2.txt','md5:acfb87d35ea
 INSERT INTO "book_book_files" VALUES(3,'Minimal Example.txt','md5:6288fd0c77d28fe3e4ff34f13042e1bc','/placeholder_library_dir/Minimal Example/Minimal Example.txt','/placeholder_library_dir/Minimal Example','.','name1=.;name2=.');
 INSERT INTO "book_book_files" VALUES(4,'Overlap Example.txt','md5:a6aceb15816f6f7e73aa01c41c9cec09','/placeholder_library_dir/Overlap Example/Overlap Example.txt','/placeholder_library_dir/Overlap Example','.','name1=.;name2=.');
 CREATE TABLE book_ids (
-    book_pkey INTEGER REFERENCES book(pkey),
+    book_pkey INT REFERENCES book(pkey),
     id_type TEXT NOT NULL,
     id_value TEXT NOT NULL,
     PRIMARY KEY (book_pkey, id_type)
@@ -57,7 +57,7 @@ CREATE TABLE book_ids (
 INSERT INTO "book_ids" VALUES(2,'ISBN','978-complete-example');
 INSERT INTO "book_ids" VALUES(2,'URI','https://example.com');
 INSERT INTO "book_ids" VALUES(4,'ISBN','978-overlap-example');
-CREATE TABLE user_sql_table (pkey INTEGER PRIMARY KEY);
+CREATE TABLE user_sql_table (pkey INT PRIMARY KEY);
 INSERT INTO "user_sql_table" VALUES(1);
 CREATE VIEW v_book_authors AS
 SELECT

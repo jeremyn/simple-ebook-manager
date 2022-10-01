@@ -17,7 +17,7 @@ def _fmt_sql(sql: str) -> str:
 
 def _coltype(use_uuid_key: bool) -> str:
     """Get column type."""
-    return "TEXT" if use_uuid_key else "INTEGER"
+    return "TEXT" if use_uuid_key else "INT"
 
 
 def _without_rowid(use_uuid_key: bool) -> str:
