@@ -6,8 +6,8 @@ Test src.db.
 
 """
 import shutil
-import sqlite3
 from pathlib import Path
+from sqlite3 import Connection, Row, connect
 from typing import Any
 from unittest.mock import patch
 
@@ -30,7 +30,7 @@ from tests.base import (
 from tests.test_command import CommandTestCase
 
 
-def _dump_db(conn: sqlite3.Connection, dump_fn: Path, temp_dir_str: str) -> None:
+def _dump_db(conn: Connection, dump_fn: Path, temp_dir_str: str) -> None:
     """Dump conn to dump_fn and replace temp_dir_str with PLACEHOLDER_DIR_STR.
 
     Use this to update the valid dump reference.
@@ -66,7 +66,7 @@ class TestDb(CommandTestCase):
         cls.CMD = get_cmd()
         super().setUpClass()
 
-    def _get_sql_data(self, conn: sqlite3.Connection) -> dict[str, Any]:
+    def _get_sql_data(self, conn: Connection) -> dict[str, Any]:
         """Get sql data from conn."""
         rows = conn.execute(
             """
@@ -76,19 +76,17 @@ class TestDb(CommandTestCase):
             """
         )
         sql_data = {
-            row[0]: {
-                "sql": row[1],
-                "data": conn.execute(f"SELECT * from {row[0]}").fetchall(),
+            row["name"]: {
+                "sql": row["sql"],
+                "data": conn.execute(f"SELECT * from {row['name']}").fetchall(),
             }
             for row in rows
         }
         self.assertTrue(sql_data)
         return sql_data
 
-    def _standardize_conn(self, conn: sqlite3.Connection, new_path_str: str) -> None:
+    def _standardize_conn(self, conn: Connection, new_path_str: str) -> None:
         """Standardize data in conn."""
-        orig_row_factory = conn.row_factory
-        conn.row_factory = sqlite3.Row
         for item in self.schema:
             if isinstance(item, SchemaItemTypes.File):
                 rows = conn.execute(
@@ -126,7 +124,6 @@ class TestDb(CommandTestCase):
                     "pkey": row["pkey"],
                 },
             )
-        conn.row_factory = orig_row_factory
 
     @patch("src.db.db._BATCH_SIZE", 3)
     def _test_main(self, *, use_uuid_key: bool) -> None:
@@ -168,12 +165,14 @@ class TestDb(CommandTestCase):
             get_log_records(cm),
         )
 
-        test_conn = sqlite3.connect(db_fn)
+        test_conn = connect(db_fn)
+        test_conn.row_factory = Row
         # uncomment to dump test_conn
         # _dump_db(test_conn, Path.home() / VALID_DB_SQL_FN.name, str(self.l_dirs[0]))
         test_data = self._get_sql_data(test_conn)
 
-        valid_conn = sqlite3.connect(":memory:")
+        valid_conn = connect(":memory:")
+        valid_conn.row_factory = Row
         valid_conn.executescript(read_text(VALID_DB_SQL_FN))
         with valid_conn:
             self._standardize_conn(valid_conn, str(self.l_dirs[0]))
@@ -217,7 +216,7 @@ class TestDb(CommandTestCase):
             ],
             get_log_records(cm),
         )
-        test_conn = sqlite3.connect(db_fn)
+        test_conn = connect(db_fn)
         self.assertEqual(
             2, test_conn.execute("SELECT count(*) FROM v_summary;").fetchone()[0]
         )
