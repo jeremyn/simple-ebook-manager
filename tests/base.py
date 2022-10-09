@@ -61,7 +61,7 @@ UNICODE_LINE, ASCII_LINE = [
 
 
 # exiting a debugger can leave temp dirs, using a prefix keeps them in one place
-_TEST_DIR_PREFIX = Path(gettempdir()) / "simple_ebook_manager_test_cases"
+_TEST_DIR_PREFIX = (Path(gettempdir()) / "simple_ebook_manager_test_cases").resolve()
 _TEST_DIR_PREFIX.mkdir(exist_ok=True)
 
 
