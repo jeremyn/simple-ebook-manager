@@ -383,7 +383,8 @@ def get_create_view_summary_sql(schema: Schema) -> str:
                     f"    cast({item.name}_concat.{item.name}_sort AS TEXT) AS {item.name}_sort,"
                 )
                 lines.append(
-                    f"    cast({item.name}_concat.{item.name}_display AS TEXT) AS {item.name}_display,"
+                    f"    cast({item.name}_concat.{item.name}_display AS TEXT) AS "
+                    f"{item.name}_display,"
                 )
             case SchemaItemTypes.Title():
                 title_fieldname = item.name
