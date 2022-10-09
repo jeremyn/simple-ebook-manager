@@ -15,7 +15,7 @@ Simple Ebook Manager is a collection of command-line tools to help you summarize
 Simple Ebook Manager:
 
 * is cross-platform.
-* has no requirements other than Python 3.10 or greater. You don't need any extra Python packages and there is no install script. Just clone the repository, read the documentation and go.
+* has no extra Python dependencies or separate install process (see the next section).
 * generates CSV or database output from scratch every time from your directories and files. Your data is not wrapped in a custom internal format or database.
 * will not modify your ebooks in any way, though it can optionally update MD5 or SHA256 hashes for your ebook files.
 * can be used for any files, not just ebooks.
@@ -31,6 +31,12 @@ Simple Ebook Manager is not a good choice if:
 * you want an all-in-one solution that handles every aspect of managing your ebooks.
 * you want a GUI or you want to browse your ebooks by cover.
 * you want your ebook manager to modify or otherwise process your ebook files: update metadata inside your ebooks, convert format, transfer to a device or upload to a cloud service.
+
+## Installation
+
+There are no requirements other than Python 3.10 or greater and a recent version of the external SQLite library if your installed Python uses one. (This generally means Linux, and if your distribution provides Python 3.10 or greater, the SQLite library provided along with it should be recent enough.)
+
+You don't need any external Python packages and there is no install script. Just clone the repository, read the documentation and go.
 
 ## Quickstart Example
 
