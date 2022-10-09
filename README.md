@@ -2,6 +2,8 @@
 
 By: [Jeremy Nation](mailto:jeremy@jeremynation.me).
 
+![Tests badge.](https://github.com/jeremyn/simple-ebook-manager/actions/workflows/main.yml/badge.svg)
+
 ## License
 
 Copyright 2022 Jeremy Nation.

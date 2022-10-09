@@ -1,0 +1,44 @@
+name: Tests
+on:
+  push:
+    branches: ["main"]
+jobs:
+  checks:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install --requirement requirements-dev.txt
+      - name: Run black
+        run: |
+          black --check ebooks src/ tests/
+      - name: Run isort
+        run: |
+          isort --check --diff ebooks src/ tests/
+      - name: Run mypy
+        run: |
+          mypy ebooks src/ tests/
+      - name: Run pylint
+        run: |
+          pylint ebooks src/ tests/
+  unittest:
+    needs: checks
+    strategy:
+      matrix:
+        os: [macos-12, ubuntu-22.04, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - name: Run unittest
+        run: |
+          python3 -m unittest discover tests/
