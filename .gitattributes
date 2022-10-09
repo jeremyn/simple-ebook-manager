@@ -1,0 +1,3 @@
+tests/files/example_library_dir/** -text
+tests/files/test_library_dir/** -text
+tests/files/valid_library_dir/** -text
