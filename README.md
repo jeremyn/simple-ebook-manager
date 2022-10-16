@@ -4,12 +4,6 @@ By: [Jeremy Nation](mailto:jeremy@jeremynation.me).
 
 ![Tests badge.](https://github.com/jeremyn/simple-ebook-manager/actions/workflows/main.yml/badge.svg)
 
-## License
-
-Copyright 2022 Jeremy Nation.
-
-Licensed under the GNU Affero General Public License (AGPL) v3. See the included [`LICENSE`](LICENSE) file for the full license text.
-
 ## Summary
 
 Simple Ebook Manager is a collection of command-line tools to help you summarize the contents of an ebook (or other data file) library based on directories and files you've created about your ebooks. You can use these tools to generate either CSV files or a SQLite database, standardize the metadata files you've created or do custom processing.
@@ -407,3 +401,9 @@ $ python3 -m unittest discover tests/
 ```
 
 from the repository root.
+
+## License
+
+Copyright [Jeremy Nation](mailto:jeremy@jeremynation.me).
+
+Licensed under the GNU Affero General Public License (AGPL) v3. See the included [`LICENSE`](LICENSE) file for the full license text.

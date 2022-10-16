@@ -1,5 +1,5 @@
 """
-Copyright 2022, Jeremy Nation <jeremy@jeremynation.me>
+Copyright Jeremy Nation <jeremy@jeremynation.me>.
 Licensed under the GNU Affero General Public License v3.
 
 Public exports from book package.
