@@ -8,7 +8,7 @@ Command class and helpers.
 from argparse import Action, ArgumentParser, Namespace
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Optional, Protocol, Sequence
+from typing import Any, Optional, Protocol, Sequence, TypedDict
 
 from src.util import (
     DirVar,
@@ -226,6 +226,11 @@ class _MainFunc(Protocol):
         ...
 
 
+class _SubparserKwargs(TypedDict):
+    description: str
+    help: str
+
+
 @dataclass(frozen=True)
 class Command:
     """Base class for commands."""
@@ -234,7 +239,7 @@ class Command:
     cmd_name: str
     has_extra_args: bool
     main: _MainFunc
-    subparser_kwargs: dict[str, str]
+    subparser_kwargs: _SubparserKwargs
 
     def configure_subparser(self, subparser: ArgumentParser) -> None:
         """Configure argparse subparser."""
@@ -258,7 +263,11 @@ def run_cmd_main(sys_argv: Sequence[str], cmds_seq: Sequence[Command]) -> None:
     subparsers = parser.add_subparsers(title="commands", dest="command", required=True)
     cmd_arg_name = Args.CMD.opt.strip("-")
     for cmd in cmds.values():
-        subparser = subparsers.add_parser(cmd.cmd_name, **cmd.subparser_kwargs)
+        subparser = subparsers.add_parser(
+            cmd.cmd_name,
+            description=cmd.subparser_kwargs["description"],
+            help=cmd.subparser_kwargs["help"],
+        )
         cmd.configure_subparser(subparser)
         subparser.set_defaults(**{cmd_arg_name: cmd})
 
