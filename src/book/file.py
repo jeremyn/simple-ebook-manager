@@ -24,7 +24,7 @@ class BookFile:
     fn: Path
 
     @classmethod
-    def from_args(  # pylint: disable=too-many-arguments
+    def from_args(
         cls,
         book_title_sort: str,
         basename: str,

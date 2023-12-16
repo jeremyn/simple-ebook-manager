@@ -5,5 +5,5 @@ profile="black"
 strict=true
 
 [tool.pylint.master]
-disable="duplicate-code"
+disable="duplicate-code,too-many-arguments"
 good-names="am,cm,fn,i,k,sd,v"
